@@ -1,7 +1,7 @@
 from datetime import datetime
 from random import randrange
 
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -24,9 +24,7 @@ def index_view():
         return 'В базе данных мнений о фильмах нет.'
     offset_value = randrange(quantity)
     opinion: Opinion | None = Opinion.query.offset(offset_value).first()
-    if not opinion:
-        return 'В базе данных мнений о фильмах нет.'
-    return opinion.text
+    return render_template('index.html', opinion=opinion)
 
 
 if __name__ == '__main__':
