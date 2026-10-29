@@ -4,7 +4,7 @@ from random import randrange
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static_dir')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
 db = SQLAlchemy(app)
 
@@ -25,6 +25,11 @@ def index_view():
     offset_value = randrange(quantity)
     opinion: Opinion | None = Opinion.query.offset(offset_value).first()
     return render_template('index.html', opinion=opinion)
+
+
+@app.route('/add')
+def add_opinion_view():
+    return 'Страница в разработке!'
 
 
 if __name__ == '__main__':
