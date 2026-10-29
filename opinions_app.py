@@ -42,7 +42,7 @@ class OpinionForm(FlaskForm):
         'Добавьте ссылку на подробный образ фильма',
         validators=[Length(1, 256), Optional()],
     )
-    sumbit = SubmitField('Добавить')
+    submit = SubmitField('Добавить')
 
 
 @app.route('/')
@@ -57,7 +57,8 @@ def index_view():
 
 @app.route('/add')
 def add_opinion_view():
-    return render_template('add_opinion.html')
+    form = OpinionForm()
+    return render_template('add_opinion.html', form=form)
 
 
 @app.route('/opinions/<int:id>')
