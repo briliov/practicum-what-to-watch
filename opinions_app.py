@@ -4,13 +4,18 @@ from random import randrange
 
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField, TextAreaField, URLField
+from wtforms.validators import DataRequired, Length, Optional
 
 app = Flask(__name__, static_folder='static')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     'SQLALCHEMY_DATABASE_URI',
 )
-app.config['SECRET KEY'] = os.environ.get('SECRET_KEY')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 db = SQLAlchemy(app)
+
+REQUIRED_FIELD_MESSAGE = 'Обязательное поле'
 
 
 class Opinion(db.Model):
@@ -19,6 +24,25 @@ class Opinion(db.Model):
     text = db.Column(db.Text, unique=True, nullable=False)
     source = db.Column(db.String(256))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+
+class OpinionForm(FlaskForm):
+    title = StringField(
+        'Введите название фильма',
+        validators=[
+            DataRequired(message=REQUIRED_FIELD_MESSAGE),
+            Length(1, 128),
+        ],
+    )
+    text = TextAreaField(
+        'Напиши мнение',
+        validators=[DataRequired(message=REQUIRED_FIELD_MESSAGE)],
+    )
+    source = URLField(
+        'Добавьте ссылку на подробный образ фильма',
+        validators=[Length(1, 256), Optional()],
+    )
+    sumbit = SubmitField('Добавить')
 
 
 @app.route('/')
