@@ -1,11 +1,15 @@
 from datetime import datetime
+import os
 from random import randrange
 
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__, static_folder='static')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+    'SQLALCHEMY_DATABASE_URI',
+)
+app.config['SECRET KEY'] = os.environ.get('SECRET_KEY')
 db = SQLAlchemy(app)
 
 
