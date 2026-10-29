@@ -5,11 +5,25 @@
     <div class="row">
       <h1>Добавить мнение о фильме</h1>
       <div class="col-12 col-lg-7 my-5">
-        <form method='POST' novalidate> 
+        <form method="POST" novalidate>
           {{ form.csrf_token }}
-          {{ form.title(class='form-control form-control-lg py-3 mb-3', placeholder=form.title.label.text) }} <br />
-          {{ form.source(class="form-control form-control-lg py-3 mb-3", placeholder=form.source.label.text) }} <br />
-          {{ form.text(class="form-control form-control-lg py-3 mb-3", placeholder=form.text.label.text,rows="3", cols="40") }}
+          {{ form.title(class="form-control form-control-lg py-3 mb-3", placeholder=form.title.label.text) }}
+          {% if form.title.errors %}
+              <p class="text-danger">
+                {% for error in form.title.errors %}
+                        {{ error }}
+                {% endfor %}
+              </p>
+          {% endif %}
+          {{ form.source(class="form-control form-control-lg py-3 mb-3", placeholder=form.source.label.text) }}
+          {{ form.text(class="form-control form-control-lg py-3 mb-3", placeholder=form.text.label.text, rows="3", cols="40")}}
+          {% if form.text.errors %}
+          <p class="text-danger">
+            {% for error in form.text.errors %}
+              {{ error }}
+            {% endfor %}
+          </p>
+          {% endif %}
           {{ form.submit(class="button px-5 py-3 btn") }}
         </form>
       </div>
