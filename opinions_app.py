@@ -1,7 +1,9 @@
+import csv
 from datetime import datetime
 import os
 from random import randrange
 
+import click
 from flask import Flask, abort, flash, redirect, render_template, url_for
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -10,11 +12,14 @@ from wtforms import StringField, SubmitField, TextAreaField, URLField
 from wtforms.validators import DataRequired, Length, Optional
 
 app = Flask(__name__, static_folder='static')
+
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     'SQLALCHEMY_DATABASE_URI',
 )
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+
 db = SQLAlchemy(app)
+
 migrate = Migrate(app, db)
 
 REQUIRED_FIELD_MESSAGE = 'Обязательное поле'
@@ -92,6 +97,20 @@ def internal_error(error):
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('404.html'), 404
+
+
+@app.cli.command('load_opinions')
+def load_opinions_command():
+    """Функция загрузки мнений в базу данных."""
+    with open('opinions.csv', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        counter = 0
+        for row in reader:
+            opinion = Opinion(**row)
+            db.session.add(opinion)
+            db.session.commit()
+            counter += 1
+    click.echo(f'Загруженно мнений: {counter}')
 
 
 if __name__ == '__main__':
