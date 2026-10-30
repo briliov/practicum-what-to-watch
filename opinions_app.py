@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 from random import randrange
 
-from flask import Flask, redirect, render_template, url_for
+from flask import Flask, flash, redirect, render_template, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField, URLField
@@ -59,6 +59,10 @@ def index_view():
 def add_opinion_view():
     form: OpinionForm = OpinionForm()
     if form.validate_on_submit():
+        text = form.text.data
+        if Opinion.query.filter_by(text=text).first() is not None:
+            flash('Такое мнение уже было оставлено ранее!', 'existing-message')
+            return render_template('add_opinion.html', form=form)
         opinion: Opinion = Opinion(
             title=form.title.data,
             text=form.text.data,
