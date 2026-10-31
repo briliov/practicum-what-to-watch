@@ -1,6 +1,7 @@
 from flask import jsonify, request
 
 from . import app, db
+from .error_handlers import InvalidAPIUsage
 from .models import Opinion
 from .views import random_opinion
 
@@ -47,11 +48,9 @@ def get_opinions():
 def add_opinion():
     data = request.get_json()
     if 'title' not in data or 'text' not in data:
-        return jsonify(
-            {'error': 'В запросе отсутствуют обязательные поля'},
-        ), 400
+        raise InvalidAPIUsage('В запросе отсутствуют обязательные поля')
     if Opinion.query.filter_by(text=data['text']).first is not None:
-        return jsonify({'error': 'Такое мнение уже есть в базе данных'}), 400
+        raise InvalidAPIUsage('Такое мнение уже есть в базе данных')
     opinion: Opinion = Opinion()
     opinion.from_dict(data)
     db.session.add(opinion)
