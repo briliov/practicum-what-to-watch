@@ -13,12 +13,11 @@ def get_opinion(id: int):
 
 @app.route('/api/opinions/<int:id>/', methods=['PATCH'])
 def update_opinion(id: int):
-    data = request.get_json()
     opinion: Opinion = Opinion.query.get_or_404(id)
-    opinion.title = data.get('title', opinion.title)
-    opinion.text = data.get('text', opinion.text)
-    opinion.source = data.get('source', opinion.source)
-    opinion.added_by = data.get('added_by', opinion.added_by)
+    opinion.title = request.json.get('title', opinion.title)
+    opinion.text = request.json.get('text', opinion.text)
+    opinion.source = request.json.get('source', opinion.source)
+    opinion.added_by = request.json.get('added_by', opinion.added_by)
     db.session.commit()
     return jsonify({'opinion': opinion.to_dict()}), 200
 
