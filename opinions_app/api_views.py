@@ -30,3 +30,8 @@ def delete_opinion(id: int):
     return '', 204
 
 
+@app.route('/api/opinions/', methods=['GET'])
+def get_opinions():
+    opinions: list[Opinion] = Opinion.query.all()
+    opinions_list: list = [opinion.to_dict() for opinion in opinions]
+    return jsonify({'opinions': opinions_list}), 200
