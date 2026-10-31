@@ -61,8 +61,6 @@ def add_opinion():
 @app.route('/api/get-random-opinion/', methods=['GET'])
 def get_random_opinion():
     opinion: Opinion | None = random_opinion()
-    if opinion:
-        return jsonify(
-            {'opinion': opinion.to_dict() if opinion else None},
-        ), 200
-    return ''
+    if opinion is not None:
+        return jsonify({'opinion': opinion.to_dict()}), 200
+    raise InvalidAPIUsage('В базе данных нет мнений', 404)
