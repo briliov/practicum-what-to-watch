@@ -1,9 +1,8 @@
-from random import randrange
-
 from flask import jsonify, request
 
 from . import app, db
 from .models import Opinion
+from .views import random_opinion
 
 
 @app.route('/api/opinions/<int:id>/', methods=['GET'])
@@ -51,10 +50,8 @@ def add_opinion():
 
 @app.route('/api/get-random-opinion/', methods=['GET'])
 def get_random_opinion():
-    quantity: int = Opinion.query.count()
-    if quantity:
-        offset_value: int = randrange(quantity)
-        opinion: Opinion | None = Opinion.query.offset(offset_value).first()
+    opinion: Opinion | None = random_opinion()
+    if opinion:
         return jsonify(
             {'opinion': opinion.to_dict() if opinion else None},
         ), 200
