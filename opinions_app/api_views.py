@@ -35,3 +35,13 @@ def get_opinions():
     opinions: list[Opinion] = Opinion.query.all()
     opinions_list: list = [opinion.to_dict() for opinion in opinions]
     return jsonify({'opinions': opinions_list}), 200
+
+
+@app.route('/api/opinions/', methods=['POST'])
+def add_opinion():
+    data = request.get_json()
+    opinion: Opinion = Opinion()
+    opinion.from_dict(data)
+    db.session.add(opinion)
+    db.session.commit()
+    return jsonify({'opinion': opinion.to_dict()}), 201
