@@ -8,7 +8,9 @@ from .views import random_opinion
 
 @app.route('/api/opinions/<int:id>/', methods=['GET'])
 def get_opinion(id: int):
-    opinion: Opinion = Opinion.query.get_or_404(id)
+    opinion: Opinion | None = Opinion.query.get(id)
+    if opinion is None:
+        raise InvalidAPIUsage('Мнение с указанным id не найдено', 404)
     return jsonify({'opinion': opinion.to_dict()}), 200
 
 
@@ -19,7 +21,7 @@ def update_opinion(id: int):
         'text' in data
         and Opinion.query.filter_by(text=data['text']).first() is not None
     ):
-        return jsonify({'error': 'Такое мнение уже есть в базе данных'}), 400
+        raise InvalidAPIUsage('Такое мнение уже есть в базе данных')
     opinion: Opinion = Opinion.query.get_or_404(id)
     opinion.title = request.json.get('title', opinion.title)
     opinion.text = request.json.get('text', opinion.text)
@@ -31,7 +33,9 @@ def update_opinion(id: int):
 
 @app.route('/api/opinions/<int:id>/', methods=['DELETE'])
 def delete_opinion(id: int):
-    opinion: Opinion = Opinion.query.get_or_404(id)
+    opinion: Opinion | None = Opinion.query.get(id)
+    if not opinion:
+        raise InvalidAPIUsage('Мнение с указанным id не найдено', 404)
     db.session.delete(opinion)
     db.session.commit()
     return '', 204
