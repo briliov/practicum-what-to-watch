@@ -22,3 +22,11 @@ def update_opinion(id: int):
     return jsonify({'opinion': opinion.to_dict()}), 200
 
 
+@app.route('/api/opinions/<int:id>/', methods=['DELETE'])
+def delete_opinion(id: int):
+    opinion: Opinion = Opinion.query.get_or_404(id)
+    db.session.delete(opinion)
+    db.session.commit()
+    return '', 204
+
+
