@@ -13,6 +13,12 @@ def get_opinion(id: int):
 
 @app.route('/api/opinions/<int:id>/', methods=['PATCH'])
 def update_opinion(id: int):
+    data = request.get_json()
+    if (
+        'text' in data
+        and Opinion.query.filter_by(text=data['text']).first() is not None
+    ):
+        return jsonify({'error': 'Такое мнение уже есть в базе данных'}), 400
     opinion: Opinion = Opinion.query.get_or_404(id)
     opinion.title = request.json.get('title', opinion.title)
     opinion.text = request.json.get('text', opinion.text)
