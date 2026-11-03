@@ -4,14 +4,15 @@ import requests
 
 from . import app
 
-AUTH_HEADER = f'Bearer {app.config['CONFIG_TOKEN']}'
+DROPBOX_TOKEN = app.config['DROPBOX_TOKEN']
+AUTH_HEADER = f'Bearer {DROPBOX_TOKEN}'
 UPLOAD_LINK = 'https://content.dropboxapi.com/2/files/upload'
 SHARING_LINK = (
     'https://api.dropboxapi.com/2/' 'sharing/create_shared_link_with_settings'
 )
 
 
-def upload_files_to_dropbox(images):
+def upload_files_to_dropbox(images: list) -> list[str]:
     urls = []
     if images is not None:
         for image in images:
